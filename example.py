@@ -33,7 +33,7 @@ print("Test 3:", t1 - t0, "seconds")
 t0 = time.time()
 print("Combination of commutators:")
 print("The combination of commutators of R U' S U2 S R' S2 R U' R' in order 4.")
-res1 = commutator.search("S R U' S U2 S R' S2 R U' R' S'",
+res1 = commutator.search("R U' S U2 S R' S2 R U' R'",
                          orderInput=4, outerBracketInput=True, limit=3)
 print(res1)
 t1 = time.time()

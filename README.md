@@ -2,7 +2,7 @@
 
 Python version of [commutator](http://github.com/nbwzx/commutator).
 
-## Overview 
+## Overview
 
 Decompose algorithms in commutator notation.
 
@@ -66,7 +66,7 @@ print(commutator.expand("S:[U',R E' R']"))
 
 See more examples at `example.py`
 
-Decompose algorithms in commutator notation with Python using the standard CPython interpreter is not recommended. We recommend using PyPy for performance reasons.
+Decomposing algorithms in commutator notation with Python using the standard CPython interpreter is not recommended. We recommend using PyPy for performance reasons.
 
 ## Contributors
 
