@@ -303,11 +303,11 @@ def score(algorithm: str) -> float:
     return float(scoreOutput[0])
 
 
-def is_number(str):
+def is_number(strInput: str) -> bool:
     try:
-        if str == 'NaN':
+        if strInput == 'NaN':
             return False
-        float(str)
+        float(strInput)
         return True
     except ValueError:
         return False
