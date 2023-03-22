@@ -56,7 +56,7 @@ Constraints:
 
 - s consist of only English letters.
 
-# Usage
+## Usage
 
 ```
 import commutator

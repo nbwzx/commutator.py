@@ -615,7 +615,7 @@ def algToArray(algorithm: str) -> List[Move]:
         return []
     if len(initialReplace) > 0:
         algTemp = re.sub(
-            r"[A-Z]w", lambda match: match.group(0).lower(), algTemp)
+            r"[A-Z]w", lambda match: match.group(0)[0].lower(), algTemp)
     alg = ""
     for i in range(len(algTemp)):
         if (i < len(algTemp) - 1 and
