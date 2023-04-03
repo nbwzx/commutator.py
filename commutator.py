@@ -175,6 +175,8 @@ def expand(algorithm: str, orderInput: int = orderInit, initialReplaceInput: Dic
     minAmount = (order // 2) + 1 - order
     maxAmount = order // 2
     rpnStack = rpn(initStack(algorithm))
+    if len(rpnStack) == 0:
+        return 'Empty input.'
     if rpnStack[0] == 'Lack left parenthesis.' or rpnStack[0] == 'Lack right parenthesis.':
         return rpnStack[0]
     calcTemp = calc(rpnStack)
