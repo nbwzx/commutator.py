@@ -4,7 +4,6 @@ Copyright (c) 2022-2023 Zixing Wang <zixingwang.cn@gmail.com>
 Licensed under MIT (https://github.com/nbwzx/commutator.py/blob/main/LICENSE)
 """
 import re
-import math
 from typing import Dict, List
 
 MAX_INT = 4294967295
@@ -390,10 +389,9 @@ def search(algorithm: str, orderInput: int = orderInit, outerBracketInput: bool 
         searchDepth = maxDepth
     for depth in range(1, searchDepth + 1):
         for i in range(commuteTotal):
-            commutBinary = bin(i)[2:]
             commuteArr = arr.copy()
-            for j in range(len(commutBinary)):
-                if commutBinary[-1 - j] == "1":
+            for j in range(commuteCount):
+                if i & (1 << j):
                     commuteArr[commuteIndex[j]], commuteArr[commuteIndex[j] +
                                                             1] = commuteArr[commuteIndex[j] + 1], commuteArr[commuteIndex[j]]
             commutatorOutput = commutatorMain(commuteArr, depth, depth)
@@ -419,11 +417,9 @@ def commutatorPre(array: List[Move], depth: int, maxSubDepth: int) -> List[str]:
     commuteTotal = 2 ** commuteCount
     commutatorResult = ["Not found."]
     for i in range(commuteTotal):
-        commutBinary = bin(i)[2:]
-        commutBinary = "0" * (commuteCount - len(commutBinary)) + commutBinary
         commuteArr = array.copy()
-        for j in range(len(commutBinary)):
-            if commutBinary[len(commutBinary) - 1 - j] == "1":
+        for j in range(commuteCount):
+            if i & (1 << j):
                 commuteArr[commuteIndex[j]], commuteArr[commuteIndex[j] +
                                                         1] = commuteArr[commuteIndex[j] + 1], commuteArr[commuteIndex[j]]
         commutatorResult = commutatorMain(commuteArr, depth, maxSubDepth)
@@ -457,7 +453,7 @@ def commutatorMain(array: List[Move], depth: int, maxSubDepth: int) -> List[str]
             arr = displace(arrBak, d, dr)
             for i in range(1, len(arr) // 2):
                 if depth == 1:
-                    minj = max(1, math.ceil(len(arr) / 2 - i))
+                    minj = max(1, (len(arr) + 1) // 2 - i)
                 else:
                     minj = 1
                 for j in range(minj, len(arr) // 2):
