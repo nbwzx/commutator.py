@@ -1,6 +1,6 @@
 """
 Commutator (https://github.com/nbwzx/commutator.py)
-Copyright (c) 2022-2023 Zixing Wang <zixingwang.cn@gmail.com>
+Copyright (c) 2022-2024 Zixing Wang <zixingwang.cn@gmail.com>
 Licensed under MIT (https://github.com/nbwzx/commutator.py/blob/main/LICENSE)
 """
 import re
@@ -18,24 +18,36 @@ fastInit = False
 
 commuteInit = {
     'U': {'class': 1, 'priority': 1},
-    'u': {'class': 1, 'priority': 2},
-    'E': {'class': 1, 'priority': 3},
-    'D': {'class': 1, 'priority': 4},
-    'd': {'class': 1, 'priority': 5},
+    'E': {'class': 1, 'priority': 2},
+    'D': {'class': 1, 'priority': 3},
     'R': {'class': 2, 'priority': 1},
-    'r': {'class': 2, 'priority': 2},
-    'M': {'class': 2, 'priority': 3},
-    'L': {'class': 2, 'priority': 4},
-    'l': {'class': 2, 'priority': 5},
+    'M': {'class': 2, 'priority': 2},
+    'L': {'class': 2, 'priority': 3},
     'F': {'class': 3, 'priority': 1},
-    'f': {'class': 3, 'priority': 2},
-    'S': {'class': 3, 'priority': 3},
-    'B': {'class': 3, 'priority': 4},
-    'b': {'class': 3, 'priority': 5}
+    'S': {'class': 3, 'priority': 2},
+    'B': {'class': 3, 'priority': 3}
 }
 
 
 initialReplaceInit = {
+    "Rw2": "r2",
+    "Rw'": "r'",
+    "Rw": "r",
+    "Lw2": "l2",
+    "Lw'": "l'",
+    "Lw": "l",
+    "Fw2": "f2",
+    "Fw'": "f'",
+    "Fw": "f",
+    "Bw2": "b2",
+    "Bw'": "b'",
+    "Bw": "b",
+    "Uw2": "u2",
+    "Uw'": "u'",
+    "Uw": "u",
+    "Dw2": "d2",
+    "Dw'": "d'",
+    "Dw": "d",
     "r2": "R2 M2",
     "r'": "R' M",
     "r": "R M'",
@@ -101,10 +113,13 @@ finalReplaceInit = {
     "U2 E'": "U u",
     "E U2": "U' u'",
     "E' U2": "U u",
-    "U E2": "U' u2",
-    "U' E2": "U u2",
-    "E2 U": "U' u2",
-    "E2 U'": "U u2"
+    "U E2": "u E'",
+    "U' E2": "u' E",
+    "E2 U": "u E'",
+    "E2 U'": "u' E",
+    "r L'": "x",
+    "r' L": "x'",
+    "r2 L2": "x2"
 }
 
 
@@ -142,16 +157,33 @@ def expand(algorithm: str, orderInput: int = orderInit, initialReplaceInput: Dic
     initialReplace = initialReplaceInput
     finalReplace = finalReplaceInput
     commute = commuteInput
+    algorithm = re.sub(r'\s', ' ', algorithm)
+    algorithm = algorithm.replace(';', ":")
     algorithm = algorithm.replace('‘', "'")
     algorithm = algorithm.replace('’', "'")
-    algorithm = algorithm.replace('(', '')
-    algorithm = algorithm.replace(')', '')
     algorithm = algorithm.replace('（', '')
     algorithm = algorithm.replace('）', '')
     algorithm = algorithm.replace('{', '')
     algorithm = algorithm.replace('}', '')
     algorithm = algorithm.replace(' ', '')
-    algorithm = ' '.join(list(algorithm))
+    algorithm = algorithm.replace('!', '')
+    algorithm = algorithm.replace('！', '')
+    algorithm = algorithm.replace('×', '*')
+    algorithm = algorithm.replace('*2', '2')
+    new_algorithm = algorithm
+    # TODO: clean and generalize this
+    for i in range(len(algorithm) - 1, 1, -1):
+        if algorithm[i] == "2" and algorithm[i - 1] == ")":
+            j = i - 1
+            while algorithm[j] != "(" and j >= 0:
+                j -= 1
+            if j >= 0:
+                new_algorithm = algorithm[0:j] + algorithm[j + 1:i - 1] + \
+                    algorithm[j + 1:i - 1] + algorithm[i + 1:len(algorithm)]
+                break
+    algorithm = new_algorithm
+    algorithm = algorithm.replace('(', '')
+    algorithm = algorithm.replace(')', '')
     algorithm = algorithm.replace('【', '[')
     algorithm = algorithm.replace('】', ']')
     algorithm = algorithm.replace('：', ':')
@@ -606,14 +638,14 @@ def invert(array: List[Move]) -> List[Move]:
 def algToArray(algorithm: str) -> List[Move]:
     global maxAlgAmount
     algTemp = algorithm
+    for i in initialReplace:
+        re_ = re.compile(i)
+        algTemp = re.sub(re_, initialReplace[i], algTemp)
     algTemp = algTemp.replace(" ", "")
     algTemp = algTemp.replace("‘", "'")
     algTemp = algTemp.replace("’", "'")
     if algTemp == "":
         return []
-    if len(initialReplace) > 0:
-        algTemp = re.sub(
-            r"[A-Z]w", lambda match: match.group(0)[0].lower(), algTemp)
     alg = ""
     for i in range(len(algTemp)):
         if (i < len(algTemp) - 1 and
@@ -623,12 +655,6 @@ def algToArray(algorithm: str) -> List[Move]:
             alg += algTemp[i] + " "
         else:
             alg += algTemp[i]
-    for i in initialReplace:
-        re_ = re.compile(i)
-        testStr = re.sub(r"[^a-zA-Z]", "", initialReplace[i])
-        for testChar in testStr:
-            if testChar in alg:
-                alg = re.sub(re_, initialReplace[i], alg)
     algSplit = alg.split(" ")
     arr = []
     for i in range(len(algSplit)):
@@ -650,10 +676,13 @@ def arrayToStr(array: List[Move]) -> str:
     arr = simplify(arr)
     if len(arr) == 0:
         return ""
-    for times in range(2):
+    isChanged = True
+    while isChanged:
+        isChanged = False
         for i in range(len(arr) - 1):
             if isSameClass(arr[i], arr[i + 1]) and commute[arr[i].base]["priority"] > commute[arr[i + 1].base]["priority"]:
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                isChanged = True
     arrTemp = []
     for i in range(len(arr)):
         if arr[i].amount < 0:
@@ -676,13 +705,14 @@ def simplify(array: List[Move]) -> List[Move]:
     if len(array) == 0:
         return []
     arr = []
+    max_priority = max(sum(1 for value in commute.values() if value['class'] == class_num) for class_num in set(value['class'] for value in commute.values())) if commute else 1
     for i in range(len(array)):
         arrayAdd = Move(array[i].base, normalize(array[i].amount))
         arrLen = len(arr)
         if normalize(arrayAdd.amount) == 0:
             continue
         isChange = False
-        for j in range(1, 4):
+        for j in range(1, max_priority + 1):
             if len(arr) >= j:
                 if arr[arrLen - j].base == arrayAdd.base:
                     canCommute = True
