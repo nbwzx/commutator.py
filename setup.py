@@ -1,9 +1,9 @@
 from setuptools import setup
 
-with open("README.md") as fh:
+with open("README.md", 'r', encoding='utf-8') as fh:
     readme_text = fh.read()
 
-with open("LICENSE") as fh:
+with open("LICENSE", 'r', encoding='utf-8') as fh:
     license_text = fh.read()
 
 setup(
