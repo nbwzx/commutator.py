@@ -59,7 +59,7 @@ Constraints:
 ## Usage
 
 ```
-import commutator
+import commutator.commutator as commutator
 print(commutator.search("S U' R E' R' U R E R' S'"))
 print(commutator.expand("S:[U',R E' R']"))
 ```
