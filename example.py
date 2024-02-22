@@ -8,7 +8,8 @@ res2 = ""
 t0 = time.time()
 print("The commutator of a b4 c b a' b2' c' b3' in different orders.")
 for orderInput in range(11):
-    res2 = commutator.search("a b4 c b a' b2' c' b3'", orderInput)[0]
+    res2 = commutator.search("a b4 c b a' b2' c' b3'", orderInput=orderInput, commuteInput={
+    }, initialReplaceInput={}, finalReplaceInput={})[0]
     print("order = ", orderInput, ", commutator = ", res2)
 t1 = time.time()
 print("Test 1:", t1 - t0, "seconds")
@@ -16,7 +17,8 @@ print("Test 1:", t1 - t0, "seconds")
 t0 = time.time()
 print("The expand of [a b,b3 c b2] in different orders.")
 for orderInput in range(11):
-    res2 = commutator.expand("[a b,b3 c b2]", orderInput)
+    res2 = commutator.expand("[a b,b3 c b2]", orderInput=orderInput, commuteInput={
+    }, initialReplaceInput={}, finalReplaceInput={})
     print("order = ", orderInput, ", expand = ", res2)
 t1 = time.time()
 print("Test 2:", t1 - t0, "seconds")
