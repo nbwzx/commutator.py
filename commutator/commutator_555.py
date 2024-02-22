@@ -4,7 +4,7 @@ Copyright (c) 2022-2024 Zixing Wang <zixingwang.cn@gmail.com>
 Licensed under MIT (https://github.com/nbwzx/commutator.py/blob/main/LICENSE)
 """
 from typing import Dict, List
-import commutator
+import commutator.commutator as commutator
 
 commuteInit = {
     'U': {'class': 1, 'priority': 1},
