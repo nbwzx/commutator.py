@@ -493,8 +493,8 @@ def commutatorMain(array: List[Move], depth: int, maxSubDepth: int) -> List[str]
                     minj = 1
                 for j in range(minj, len(arr) // 2):
                     part1x, part2x = [], []
-                    commuteAdd1: List[List[Move]] = [[]]
-                    commuteAdd2: List[List[Move]] = [[]]
+                    commuteAdd1: List[List[Move]] = []
+                    commuteAdd2: List[List[Move]] = []
                     if arr[i - 1].base == arr[i + j - 1].base:
                         # For [a bx,by c bz]
                         for ir in range(minAmount, maxAmount + 1):
@@ -544,7 +544,7 @@ def commutatorMain(array: List[Move], depth: int, maxSubDepth: int) -> List[str]
                                         arr[i + j:i + j + 2] + part2x
                                     )
                                     commuteAdd2.append(commuteCase)
-                    for commuteAddKey in range(1, len(commuteAdd1)):
+                    for commuteAddKey in range(len(commuteAdd1)):
                         part1x = commuteAdd1[commuteAddKey]
                         part2x = commuteAdd2[commuteAddKey]
                         subArr = simplify(
@@ -709,7 +709,8 @@ def simplify(array: List[Move]) -> List[Move]:
     if len(array) == 0:
         return []
     arr: List[Move] = []
-    max_priority = max(sum(1 for value in commute.values() if value['class'] == class_num) for class_num in set(value['class'] for value in commute.values())) if commute else 1
+    max_priority = max(sum(1 for value in commute.values() if value['class'] == class_num) for class_num in set(
+        value['class'] for value in commute.values())) if commute else 1
     for i in range(len(array)):
         arrayAdd = Move(array[i].base, normalize(array[i].amount))
         arrLen = len(arr)
@@ -748,11 +749,6 @@ def isSameClass(move1: Move, move2: Move) -> bool:
         if commute[move1.base]["class"] == commute[move2.base]["class"]:
             return True
     return False
-
-
-def swapArray(array: List[Move], index1: int, index2: int) -> List[Move]:
-    array[index1], array[index2] = array[index2], array[index1]
-    return array
 
 
 def normalize(amount: int) -> int:
