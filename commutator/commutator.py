@@ -145,7 +145,7 @@ initialReplace = initialReplaceInit
 finalReplace = finalReplaceInit
 
 
-def expand(algorithm: str, orderInput: int = orderInit, initialReplaceInput: Dict[str, str] = initialReplaceInit, finalReplaceInput: Dict[str, str] = finalReplaceInit, commuteInput: Dict[str, Dict[str, int]] = commuteInit) -> str:
+def expand(algorithm: str, orderInput: int = orderInit, initialReplaceInput: Dict[str, str] = initialReplaceInit, finalReplaceInput: Dict[str, str] = finalReplaceInit, commuteInput: Dict[str, Dict[str, int]] = commuteInit, isInverse: bool = False) -> str:
     global order
     global initialReplace
     global finalReplace
@@ -213,7 +213,10 @@ def expand(algorithm: str, orderInput: int = orderInit, initialReplaceInput: Dic
     calcTemp = calc(rpnStack)
     if calcTemp == '':
         return 'Empty input.'
-    expandOutput = arrayToStr(algToArray(calcTemp))
+    if isInverse:
+        expandOutput = arrayToStr(invert(algToArray(calcTemp)))
+    else:
+        expandOutput = arrayToStr(algToArray(calcTemp))
     if expandOutput == '':
         return 'Empty input.'
     return expandOutput

@@ -108,8 +108,8 @@ def search(algorithm: str) -> List[str]:
     return commutator.search(algorithm=algorithm, initialReplaceInput=initialReplaceInit, finalReplaceInput=finalReplaceInit, commuteInput=commuteInit)
 
 
-def expand(algorithm: str) -> str:
-    return commutator.expand(algorithm=algorithm, initialReplaceInput=initialReplaceInit, finalReplaceInput=finalReplaceInit, commuteInput=commuteInit)
+def expand(algorithm: str, isInverse: bool = False) -> str:
+    return commutator.expand(algorithm=algorithm, initialReplaceInput=initialReplaceInit, finalReplaceInput=finalReplaceInit, commuteInput=commuteInit, isInverse=isInverse)
 
 
 # TODO: clean and generalize this
