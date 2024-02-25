@@ -9,9 +9,9 @@ from typing import Dict, List
 MAX_INT = 4294967295
 orderInit = 4
 outerBracketInit = False
-abMaxScoreInit = 2.5
-abMinScoreInit = 5
-addScoreInit = 1
+abMaxScoreInit: float = 2.5
+abMinScoreInit: float = 5
+addScoreInit: float = 1
 maxDepthInit = 0
 limitInit = 0
 fastInit = False
@@ -129,7 +129,7 @@ class Move(object):
         self.amount = amount
 
 
-result = []
+result: List[str] = []
 order = orderInit
 minAmount = orderInit // 2 + 1 - orderInit
 maxAmount = orderInit // 2
@@ -252,8 +252,8 @@ def operatorLevel(operator: str) -> int:
 
 
 def rpn(stackInput: List[str]) -> List[str]:
-    stackOutput = []
-    operatorStack = []
+    stackOutput: List[str] = []
+    operatorStack: List[str] = []
     isMatch = False
     operatorStackPop = ""
     while stackInput:
@@ -284,7 +284,7 @@ def rpn(stackInput: List[str]) -> List[str]:
 
 
 def calc(stack: List[str]) -> str:
-    calc_output = []
+    calc_output: List[str] = []
     while len(stack) > 0:
         sign = stack.pop(0)
         if isOperator(sign):
@@ -320,7 +320,7 @@ def score(algorithm: str) -> float:
     alg = f"[{alg.replace('+', ']+[')}]"
     alg = alg.replace('][', ']+[')
     rpnStack = rpn(initStack(alg))
-    scoreOutput = []
+    scoreOutput: List[str] = []
     while len(rpnStack) > 0:
         sign = rpnStack.pop(0)
         if isOperator(sign):
@@ -490,7 +490,8 @@ def commutatorMain(array: List[Move], depth: int, maxSubDepth: int) -> List[str]
                     minj = 1
                 for j in range(minj, len(arr) // 2):
                     part1x, part2x = [], []
-                    commuteAdd1, commuteAdd2 = [[]], [[]]
+                    commuteAdd1: List[List[Move]] = [[]]
+                    commuteAdd2: List[List[Move]] = [[]]
                     if arr[i - 1].base == arr[i + j - 1].base:
                         # For [a bx,by c bz]
                         for ir in range(minAmount, maxAmount + 1):
@@ -638,9 +639,9 @@ def invert(array: List[Move]) -> List[Move]:
 def algToArray(algorithm: str) -> List[Move]:
     global maxAlgAmount
     algTemp = algorithm
-    for i in initialReplace:
-        re_ = re.compile(i)
-        algTemp = re.sub(re_, initialReplace[i], algTemp)
+    for s in initialReplace:
+        re_ = re.compile(s)
+        algTemp = re.sub(re_, initialReplace[s], algTemp)
     algTemp = algTemp.replace(" ", "")
     algTemp = algTemp.replace("‘", "'")
     algTemp = algTemp.replace("’", "'")
@@ -695,8 +696,8 @@ def arrayToStr(array: List[Move]) -> str:
         else:
             arrTemp.append(f"{arr[i].base}{arr[i].amount}")
     arrOutput = f"{' '.join(arrTemp)} "
-    for i in finalReplace:
-        arrOutput = arrOutput.replace(f"{i} ", f"{finalReplace[i]} ")
+    for s in finalReplace:
+        arrOutput = arrOutput.replace(f"{s} ", f"{finalReplace[s]} ")
     arrOutput = arrOutput[:-1]
     return arrOutput
 
@@ -704,7 +705,7 @@ def arrayToStr(array: List[Move]) -> str:
 def simplify(array: List[Move]) -> List[Move]:
     if len(array) == 0:
         return []
-    arr = []
+    arr: List[Move] = []
     max_priority = max(sum(1 for value in commute.values() if value['class'] == class_num) for class_num in set(value['class'] for value in commute.values())) if commute else 1
     for i in range(len(array)):
         arrayAdd = Move(array[i].base, normalize(array[i].amount))

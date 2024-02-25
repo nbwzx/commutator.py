@@ -1,4 +1,4 @@
-import commutator.commutator as commutator
+import commutator
 from typing import List
 import time
 

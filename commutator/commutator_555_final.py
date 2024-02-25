@@ -101,7 +101,7 @@ initialReplaceInit = {
     "S": "f s b'",
 }
 
-finalReplaceInit = {}
+finalReplaceInit: Dict[str, str] = {}
 
 
 def search(algorithm: str) -> List[str]:
