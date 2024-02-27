@@ -125,7 +125,7 @@ finalReplaceInit = {
 
 
 class Move(object):
-    def __init__(self, base, amount):
+    def __init__(self, base: str, amount: int) -> None:
         self.base = base
         self.amount = amount
 
@@ -317,10 +317,10 @@ def score(algorithm: str) -> float:
         if isOperator(sign):
             scorePop2 = scoreOutput.pop()
             scorePop1 = scoreOutput.pop()
-            score1 = float(scorePop1) if is_number(scorePop1) else len(
-                scorePop1.split())
-            score2 = float(scorePop2) if is_number(scorePop2) else len(
-                scorePop2.split())
+            score1 = float(scorePop1) if is_number(scorePop1) else float(len(
+                scorePop1.split()))
+            score2 = float(scorePop2) if is_number(scorePop2) else float(len(
+                scorePop2.split()))
             scoreOutput.append(str(scoreTwo(score1, score2, sign)))
         else:
             scoreOutput.append(sign)
@@ -372,8 +372,6 @@ def search(algorithm: str, orderInput: int = orderInit, outerBracketInput: bool 
     commute = commuteInput
     fast = fastInput
     result = []
-    if algorithm == "":
-        return ["Empty input."]
     arr = algToArray(algorithm)
     if order == 0:
         isOrderZero = True
@@ -398,7 +396,7 @@ def search(algorithm: str, orderInput: int = orderInit, outerBracketInput: bool 
         if amountCount % order != 0:
             return ["Not found."]
     commuteCount = 0
-    commuteIndex = []
+    commuteIndex: List[int] = []
     for i in range(arrLen - 1):
         if isSameClass(arr[i], arr[i + 1]):
             commuteIndex.append(i)
@@ -432,7 +430,7 @@ def search(algorithm: str, orderInput: int = orderInit, outerBracketInput: bool 
 
 def commutatorPre(array: List[Move], depth: int, maxSubDepth: int) -> List[str]:
     commuteCount = 0
-    commuteIndex = []
+    commuteIndex: List[int] = []
     for i in range(len(array) - 1):
         if isSameClass(array[i], array[i + 1]):
             commuteIndex.append(i)
@@ -480,7 +478,8 @@ def commutatorMain(array: List[Move], depth: int, maxSubDepth: int) -> List[str]
                 else:
                     minj = 1
                 for j in range(minj, len(arr) // 2):
-                    part1x, part2x = [], []
+                    part1x: List[Move] = []
+                    part2x: List[Move] = []
                     commuteAdd1: List[List[Move]] = []
                     commuteAdd2: List[List[Move]] = []
                     if arr[i - 1].base == arr[i + j - 1].base:
@@ -501,7 +500,7 @@ def commutatorMain(array: List[Move], depth: int, maxSubDepth: int) -> List[str]
                         commuteAdd1.append(part1x)
                         part2x = simplify(arr[i:i + j])
                         commuteAdd2.append(part2x)
-                        commuteCase = []
+                        commuteCase: List[Move] = []
                         if isSameClass(arr[i - 1], arr[i + j - 1]):
                             # For L a R b L' a' R' b' = [L a R,b L' R]
                             commuteAdd1.append(part1x)
@@ -621,7 +620,7 @@ def displace(array: List[Move], d: int, dr: int) -> List[Move]:
 
 
 def invert(array: List[Move]) -> List[Move]:
-    arr = []
+    arr: List[Move] = []
     for i in range(len(array) - 1, -1, -1):
         arr.append(Move(array[i].base, normalize(-array[i].amount)))
     return arr
@@ -674,7 +673,7 @@ def arrayToStr(array: List[Move]) -> str:
             if isSameClass(arr[i], arr[i + 1]) and commute[arr[i].base]["priority"] > commute[arr[i + 1].base]["priority"]:
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
                 isChanged = True
-    arrTemp = []
+    arrTemp: List[str] = []
     for i in range(len(arr)):
         if arr[i].amount < 0:
             if arr[i].amount == -1:
