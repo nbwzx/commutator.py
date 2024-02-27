@@ -227,20 +227,15 @@ def initStack(algorithm: str) -> List[str]:
 
 
 def operatorLevel(operator: str) -> int:
-    if operator == ":":
-        return 0
-    elif operator == ",":
-        return 1
-    elif operator == "/":
-        return 2
-    elif operator == "+":
-        return 3
-    elif operator == "[":
-        return 4
-    elif operator == "]":
-        return 5
-    else:
-        return -1
+    operator_levels = {
+        ":": 0,
+        ",": 1,
+        "/": 2,
+        "+": 3,
+        "[": 4,
+        "]": 5
+    }
+    return operator_levels.get(operator, -1)
 
 
 def rpn(stackInput: List[str]) -> List[str]:
@@ -585,14 +580,11 @@ def commutatorMain(array: List[Move], depth: int, maxSubDepth: int) -> List[str]
 
 
 def repeatEnd(array: List[Move], attempt: int) -> List[Move]:
-    arr = array.copy()
-    if len(arr) == 0:
+    if not array:
         return []
-    arrPop = arr.pop()
     if attempt == 0:
-        return arr
-    arr.append(Move(arrPop.base, attempt))
-    return arr
+        return array[:-1]
+    return array[:-1] + [Move(array[-1].base, attempt)]
 
 
 def pairToStr(part0: str, part1: str, part2: str, subPart: str) -> str:
@@ -614,9 +606,8 @@ def pairToStr(part0: str, part1: str, part2: str, subPart: str) -> str:
 
 
 def displace(array: List[Move], d: int, dr: int) -> List[Move]:
-    arr = array.copy()
-    arrEnd = repeatEnd(arr[:d], dr)
-    return simplify(invert(arrEnd) + arr + arrEnd)
+    arrEnd = repeatEnd(array[:d], dr)
+    return simplify(invert(arrEnd) + array + arrEnd)
 
 
 def invert(array: List[Move]) -> List[Move]:
@@ -628,11 +619,10 @@ def invert(array: List[Move]) -> List[Move]:
 
 def algToArray(algorithm: str) -> List[Move]:
     global maxAlgAmount
-    algTemp = algorithm
+    algTemp = cleaner.clean(algorithm)
     for s in initialReplace:
         re_ = re.compile(s)
         algTemp = re.sub(re_, initialReplace[s], algTemp)
-    algTemp = cleaner.clean(algTemp)
     algTemp = algTemp.replace(" ", "")
     if algTemp == "":
         return []
