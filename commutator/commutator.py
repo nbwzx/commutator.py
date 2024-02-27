@@ -4,6 +4,7 @@ Copyright (c) 2022-2024 Zixing Wang <zixingwang.cn@gmail.com>
 Licensed under MIT (https://github.com/nbwzx/commutator.py/blob/main/LICENSE)
 """
 import re
+import commutator.cleaner as cleaner
 from typing import Dict, List
 
 MAX_INT = 4294967295
@@ -157,20 +158,14 @@ def expand(algorithm: str, orderInput: int = orderInit, initialReplaceInput: Dic
     initialReplace = initialReplaceInput
     finalReplace = finalReplaceInput
     commute = commuteInput
-    algorithm = re.sub(r'\s', ' ', algorithm)
-    algorithm = algorithm.replace(';', ":")
-    algorithm = algorithm.replace('‘', "'")
-    algorithm = algorithm.replace('’', "'")
-    algorithm = algorithm.replace('（', '')
-    algorithm = algorithm.replace('）', '')
-    algorithm = algorithm.replace('{', '')
-    algorithm = algorithm.replace('}', '')
-    algorithm = algorithm.replace(' ', '')
-    algorithm = algorithm.replace('!', '')
-    algorithm = algorithm.replace('！', '')
-    algorithm = algorithm.replace('×', '*')
+    algorithm = cleaner.clean(algorithm)
+    algorithm = algorithm.replace('* ', '*').replace(' *', '*')
+    algorithm = algorithm.replace(': ', ':').replace(' :', ':')
+    algorithm = algorithm.replace('[ ', '[').replace(' [', '[')
+    algorithm = algorithm.replace('] ', ']').replace(' ]', ']')
+    algorithm = algorithm.replace(', ', ',').replace(' ,', ',')
+    algorithm = algorithm.replace('+ ', '+').replace(' +', '+')
     algorithm = algorithm.replace('*2', '2')
-    new_algorithm = algorithm
     # TODO: clean and generalize this
     for i in range(len(algorithm) - 1, 1, -1):
         if algorithm[i] == "2" and algorithm[i - 1] == ")":
@@ -178,24 +173,20 @@ def expand(algorithm: str, orderInput: int = orderInit, initialReplaceInput: Dic
             while algorithm[j] != "(" and j >= 0:
                 j -= 1
             if j >= 0:
-                new_algorithm = algorithm[0:j] + algorithm[j + 1:i - 1] + \
+                algorithm = algorithm[0:j] + algorithm[j + 1:i - 1] + \
                     algorithm[j + 1:i - 1] + algorithm[i + 1:len(algorithm)]
                 break
-    algorithm = new_algorithm
+    for i in range(len(algorithm) - 1, 1, -1):
+        if algorithm[i] == "2" and algorithm[i - 1] == "]":
+            j = i - 1
+            while algorithm[j] != "[" and j >= 0:
+                j -= 1
+            if j >= 0:
+                algorithm = algorithm[0:j] + algorithm[j + 1:i - 1] + \
+                    algorithm[j + 1:i - 1] + algorithm[i + 1:len(algorithm)]
+                break
     algorithm = algorithm.replace('(', '')
     algorithm = algorithm.replace(')', '')
-    algorithm = algorithm.replace('【', '[')
-    algorithm = algorithm.replace('】', ']')
-    algorithm = algorithm.replace('：', ':')
-    algorithm = algorithm.replace('，', ',')
-    algorithm = algorithm.replace(': ', ':')
-    algorithm = algorithm.replace(', ', ',')
-    algorithm = algorithm.replace('[ ', '[')
-    algorithm = algorithm.replace('] ', ']')
-    algorithm = algorithm.replace(' :', ':')
-    algorithm = algorithm.replace(' ,', ',')
-    algorithm = algorithm.replace(' [', '[')
-    algorithm = algorithm.replace(' ]', ']')
     algorithm = '[' + algorithm.replace('+', ']+[') + ']'
     algorithm = algorithm.replace('][', ']+[')
     if order == 0:
@@ -211,8 +202,6 @@ def expand(algorithm: str, orderInput: int = orderInit, initialReplaceInput: Dic
     if rpnStack[0] == 'Lack left parenthesis.' or rpnStack[0] == 'Lack right parenthesis.':
         return rpnStack[0]
     calcTemp = calc(rpnStack)
-    if calcTemp == '':
-        return 'Empty input.'
     if isInverse:
         expandOutput = arrayToStr(invert(algToArray(calcTemp)))
     else:
@@ -303,7 +292,6 @@ def calc(stack: List[str]) -> str:
 
 
 def calcTwo(algorithm1: str, algorithm2: str, sign: str) -> str:
-    array1, array2 = [], []
     array1 = algToArray(algorithm1)
     array2 = algToArray(algorithm2)
     if sign == "+":
@@ -645,9 +633,8 @@ def algToArray(algorithm: str) -> List[Move]:
     for s in initialReplace:
         re_ = re.compile(s)
         algTemp = re.sub(re_, initialReplace[s], algTemp)
+    algTemp = cleaner.clean(algTemp)
     algTemp = algTemp.replace(" ", "")
-    algTemp = algTemp.replace("‘", "'")
-    algTemp = algTemp.replace("’", "'")
     if algTemp == "":
         return []
     alg = ""
@@ -660,7 +647,7 @@ def algToArray(algorithm: str) -> List[Move]:
         else:
             alg += algTemp[i]
     algSplit = alg.split(" ")
-    arr = []
+    arr: List[Move] = []
     for i in range(len(algSplit)):
         arr.append(Move(algSplit[i][0], 0))
         algNumber = re.sub(r"[^0-9]", "", algSplit[i])
