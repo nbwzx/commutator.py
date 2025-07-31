@@ -1,6 +1,6 @@
 """
 Commutator (https://github.com/nbwzx/commutator.py)
-Copyright (c) 2022-2024 Zixing Wang <zixingwang.cn@gmail.com>
+Copyright (c) 2022-2025 Zixing Wang <zixingwang.cn@gmail.com>
 Licensed under MIT (https://github.com/nbwzx/commutator.py/blob/main/LICENSE)
 """
 import re
@@ -319,7 +319,11 @@ def score(algorithm: str) -> float:
             scoreOutput.append(str(scoreTwo(score1, score2, sign)))
         else:
             scoreOutput.append(sign)
-    return float(scoreOutput[0])
+    # Prefer U l:[E',L' U' L] to U M:[L E' L',U']
+    alg_remove_sign = re.sub(r"[\[\],:]", " ", alg)
+    alg_remove_sign = re.sub(r"\s+", " ", alg_remove_sign).strip()
+    move_delta = len(alg_remove_sign.split(" ")) - len(algToArray(alg_remove_sign))
+    return float(scoreOutput[0]) + move_delta * 0.001
 
 
 def is_number(strInput: str) -> bool:
